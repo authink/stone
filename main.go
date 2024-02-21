@@ -58,11 +58,12 @@ func Main(locales *embed.FS, seed SeedFunc, setupAPIGroup SetupAPIGroupFunc) {
 				PropNamingStrategy: swag.CamelCase,
 				OutputTypes:        []string{"go", "json", "yaml"},
 
-				ParseDepth: 100,
+				ParseDependency: 1,
+				ParseDepth:      100,
+				ParseGoList:     true,
+				PackagePrefix:   "inkstone",
 
-				OverridesFile: gen.DefaultOverridesFile,
-				ParseGoList:   true,
-
+				OverridesFile:      gen.DefaultOverridesFile,
 				LeftTemplateDelim:  "{{",
 				RightTemplateDelim: "}}",
 
