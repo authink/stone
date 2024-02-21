@@ -3,5 +3,7 @@
 ## Publish
 
 ```bash
-$ make pub V="0.1.0"
+# 1.upgrade version in Makefile
+# 2.run
+$ make pub
 ```
