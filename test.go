@@ -33,13 +33,13 @@ func teardown(app *AppContext) {
 func TestMain(packageName string, ctx *context.Context, locales *embed.FS, seed SeedFunc, setupAPIGroup SetupAPIGroupFunc) func(*testing.M) {
 	env := LoadEnv()
 	env.DbName = fmt.Sprintf("%s_%s", env.DbName, packageName)
-	defer CreateDB(
+	dropDB := CreateDB(
 		env.DbUser,
 		env.DbPasswd,
 		env.DbName,
 		env.DbHost,
 		env.DbPort,
-	)()
+	)
 
 	app := NewAppContextWithEnv(locales, env)
 	router, apiGroup := SetupRouter(app)
@@ -57,6 +57,7 @@ func TestMain(packageName string, ctx *context.Context, locales *embed.FS, seed 
 	)
 
 	return func(m *testing.M) {
+		defer dropDB()
 		defer app.Close()
 
 		setup(app, seed)
