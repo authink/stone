@@ -23,7 +23,7 @@ type ORM[T any] interface {
 type TxFunc func(tx *sqlx.Tx) error
 
 func Transaction(app *AppContext, txFunc TxFunc) (err error) {
-	tx := app.DB.MustBegin()
+	tx := app.MustBegin()
 
 	if err = txFunc(tx); err != nil {
 		tx.Rollback()

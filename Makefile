@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := public
-V := 0.1.3
+V := 0.1.4
 
 public:
 	git tag v$(V)

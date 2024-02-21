@@ -20,7 +20,7 @@ func SetupRouter(app *AppContext) (router *gin.Engine, gApi *gin.RouterGroup) {
 
 	setupSwagger(router)
 
-	gApi = router.Group(app.Env.BasePath)
+	gApi = router.Group(app.BasePath)
 	return
 }
 

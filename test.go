@@ -66,7 +66,7 @@ func TestFetch(ctx context.Context, method, pathname string, reqObj, resObj any,
 	w = httptest.NewRecorder()
 	req, _ := http.NewRequest(
 		method,
-		path.Join("/", app.Env.BasePath, pathname),
+		path.Join("/", app.BasePath, pathname),
 		reader,
 	)
 

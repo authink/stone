@@ -11,7 +11,7 @@ import (
 type SeedFunc func(*AppContext)
 
 func createSourceUrl(app *AppContext) string {
-	return fmt.Sprintf("file://%s", app.Env.DbMigrateFileSource)
+	return fmt.Sprintf("file://%s", app.DbMigrateFileSource)
 }
 
 func migrateSchema(app *AppContext, direction string) {
@@ -21,11 +21,11 @@ func migrateSchema(app *AppContext, direction string) {
 
 	sourceUrl := createSourceUrl(app)
 	databaseUrl := ConnectDBUrl(
-		app.Env.DbUser,
-		app.Env.DbPasswd,
-		app.Env.DbName,
-		app.Env.DbHost,
-		app.Env.DbPort,
+		app.DbUser,
+		app.DbPasswd,
+		app.DbName,
+		app.DbHost,
+		app.DbPort,
 		true,
 	)
 

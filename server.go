@@ -19,7 +19,7 @@ func startServer(srv *http.Server) {
 func createServer(app *AppContext, handler http.Handler) (srv *http.Server) {
 
 	srv = &http.Server{
-		Addr:    fmt.Sprintf("%s:%d", app.Env.Host, app.Env.Port),
+		Addr:    fmt.Sprintf("%s:%d", app.Host, app.Port),
 		Handler: handler,
 	}
 
@@ -34,7 +34,7 @@ func gracefulShutdown(app *AppContext, srv *http.Server) {
 
 	<-quit
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(app.Env.ShutdownTimeout)*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(app.ShutdownTimeout)*time.Second)
 	defer cancel()
 
 	if err := srv.Shutdown(ctx); err != nil {

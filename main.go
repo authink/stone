@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/cosmtrek/air/runner"
+	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 	"github.com/swaggo/swag"
 	"github.com/swaggo/swag/format"
@@ -15,6 +16,10 @@ import (
 func Main(locales *embed.FS, seed SeedFunc, setupAPIGroup SetupAPIGroupFunc) {
 	app := NewAppContext(locales)
 	defer app.Close()
+
+	if app.AppENV != DEVELOPMENT {
+		gin.SetMode("release")
+	}
 
 	var cmd = &cobra.Command{Use: app.AppName}
 
