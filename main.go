@@ -61,7 +61,6 @@ func Main(locales *embed.FS, seed SeedFunc, setupAPIGroup SetupAPIGroupFunc) {
 				ParseDependency: 1,
 				ParseDepth:      100,
 				ParseGoList:     true,
-				PackagePrefix:   "inkstone",
 
 				OverridesFile:      gen.DefaultOverridesFile,
 				LeftTemplateDelim:  "{{",
