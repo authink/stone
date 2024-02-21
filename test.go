@@ -15,10 +15,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type TestContextKey string
+type testContextKey string
 
-var TestCtxAppKey = TestContextKey("app")
-var TestCtxRouterKey = TestContextKey("router")
+var testCtxAppKey = testContextKey("app")
+var testCtxRouterKey = testContextKey("router")
 
 func setup(app *AppContext, seed SeedFunc) {
 	migrateSchema(app, "up")
@@ -32,12 +32,12 @@ func teardown(app *AppContext) {
 func TestMain(ctx *context.Context, app *AppContext, router *gin.Engine, seed SeedFunc) func(*testing.M) {
 	*ctx = context.WithValue(
 		*ctx,
-		TestCtxAppKey,
+		testCtxAppKey,
 		app,
 	)
 	*ctx = context.WithValue(
 		*ctx,
-		TestCtxRouterKey,
+		testCtxRouterKey,
 		router,
 	)
 
@@ -55,7 +55,7 @@ func TestMain(ctx *context.Context, app *AppContext, router *gin.Engine, seed Se
 }
 
 func TestFetch(ctx context.Context, method, pathname string, reqObj, resObj any, accessToken string) (w *httptest.ResponseRecorder, err error) {
-	app := ctx.Value(TestCtxAppKey).(*AppContext)
+	app := ctx.Value(testCtxAppKey).(*AppContext)
 
 	var reader io.Reader
 	if reqObj != nil {
@@ -74,7 +74,7 @@ func TestFetch(ctx context.Context, method, pathname string, reqObj, resObj any,
 		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken))
 	}
 
-	router := ctx.Value(TestCtxRouterKey).(*gin.Engine)
+	router := ctx.Value(testCtxRouterKey).(*gin.Engine)
 	router.ServeHTTP(w, req)
 
 	if w.Body.Len() > 0 {
