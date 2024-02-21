@@ -1,6 +1,6 @@
-.DEFAULT_GOAL := public
+.DEFAULT_GOAL := package
 V := 0.1.4
 
-public:
+package:
 	git tag v$(V)
 	git push --tags
