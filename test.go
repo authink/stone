@@ -2,6 +2,7 @@ package inkstone
 
 import (
 	"context"
+	"embed"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -29,7 +30,21 @@ func teardown(app *AppContext) {
 	migrateSchema(app, "down")
 }
 
-func TestMain(ctx *context.Context, app *AppContext, router *gin.Engine, seed SeedFunc) func(*testing.M) {
+func TestMain(packageName string, ctx *context.Context, locales *embed.FS, seed SeedFunc, setupAPIGroup SetupAPIGroupFunc) func(*testing.M) {
+	env := LoadEnv()
+	env.DbName = fmt.Sprintf("%s_%s", env.DbName, packageName)
+	defer CreateDB(
+		env.DbUser,
+		env.DbPasswd,
+		env.DbName,
+		env.DbHost,
+		env.DbPort,
+	)()
+
+	app := NewAppContextWithEnv(locales, env)
+	router, apiGroup := SetupRouter(app)
+	setupAPIGroup(apiGroup)
+
 	*ctx = context.WithValue(
 		*ctx,
 		testCtxAppKey,
@@ -42,6 +57,8 @@ func TestMain(ctx *context.Context, app *AppContext, router *gin.Engine, seed Se
 	)
 
 	return func(m *testing.M) {
+		defer app.Close()
+
 		setup(app, seed)
 
 		exitCode := m.Run()
