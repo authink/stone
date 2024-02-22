@@ -170,6 +170,20 @@ func AssertEnvDev(feature string) {
 	}
 }
 
+func GetEnvUint16(key string, value *uint16) {
+	if v := os.Getenv(key); len(v) > 0 {
+		if _, err := fmt.Sscanf(v, "%d", value); err != nil {
+			panic(err)
+		}
+	}
+}
+
+func GetEnvString(key string, value *string) {
+	if v := os.Getenv(key); len(v) > 0 {
+		*value = v
+	}
+}
+
 func getAppENV() string {
 	appENV := DEVELOPMENT
 	GetEnvString(APP_ENV, &appENV)
@@ -183,18 +197,4 @@ func getAppENV() string {
 func getAppCWD() (appCWD string) {
 	GetEnvString(APP_CWD, &appCWD)
 	return
-}
-
-func GetEnvUint16(key string, value *uint16) {
-	if v := os.Getenv(key); len(v) > 0 {
-		if _, err := fmt.Sscanf(v, "%d", value); err != nil {
-			panic(err)
-		}
-	}
-}
-
-func GetEnvString(key string, value *string) {
-	if v := os.Getenv(key); len(v) > 0 {
-		*value = v
-	}
 }

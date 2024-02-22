@@ -3,7 +3,6 @@ package inkstone
 import (
 	"embed"
 
-	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -35,11 +34,4 @@ func NewAppContextWithEnv(locales *embed.FS, env *Env) *AppContext {
 
 func (app *AppContext) Close() {
 	app.DB.Close()
-}
-
-func setupAppMiddleware(app *AppContext) gin.HandlerFunc {
-	return HandlerAdapter(func(c *Context) {
-		c.setApp(app)
-		c.Next()
-	})
 }

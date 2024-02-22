@@ -9,7 +9,14 @@ import (
 	"golang.org/x/text/language"
 )
 
-func newI18nBundle(locales *embed.FS) (bundle *libI18n.Bundle) {
+func setupAppMiddleware(app *AppContext) gin.HandlerFunc {
+	return HandlerAdapter(func(c *Context) {
+		c.setApp(app)
+		c.Next()
+	})
+}
+
+func i18nBundle(locales *embed.FS) (bundle *libI18n.Bundle) {
 	bundle = libI18n.NewBundle(language.English)
 	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
 	bundle.LoadMessageFileFS(locales, "locales/en.toml")
@@ -18,17 +25,13 @@ func newI18nBundle(locales *embed.FS) (bundle *libI18n.Bundle) {
 }
 
 func setupI18nMiddleware(locales *embed.FS) gin.HandlerFunc {
-	return func(c *gin.Context) {
+
+	return HandlerAdapter(func(c *Context) {
 		lang := c.Query("lang")
 		accept := c.GetHeader("Accept-Language")
-		localizer := libI18n.NewLocalizer(newI18nBundle(locales), lang, accept)
+		localizer := libI18n.NewLocalizer(i18nBundle(locales), lang, accept)
 
-		c.Set("localizer", localizer)
+		c.setLocalizer(localizer)
 		c.Next()
-	}
-}
-
-func Translate(c *gin.Context, messageID string) string {
-	localizer := c.MustGet("localizer").(*libI18n.Localizer)
-	return localizer.MustLocalize(&libI18n.LocalizeConfig{MessageID: messageID})
+	})
 }
