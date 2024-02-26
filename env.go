@@ -63,6 +63,7 @@ const (
 	DB_CONN_MAX_LIFE_TIME  string = "DB_CONN_MAX_LIFE_TIME"
 	DB_CONN_MAX_IDLE_TIME  string = "DB_CONN_MAX_IDLE_TIME"
 	DB_MIGRATE_FILE_SOURCE string = "DB_MIGRATE_FILE_SOURCE"
+	DB_LOG_MODE            string = "DB_LOG_MODE"
 	BASE_PATH              string = "BASE_PATH"
 )
 
@@ -86,6 +87,7 @@ type Env struct {
 	DbConnMaxLifeTime    uint16
 	DbConnMaxIdleTime    uint16
 	DbMigrateFileSource  string
+	DbLogMode            bool
 	BasePath             string
 }
 
@@ -137,6 +139,9 @@ func LoadEnv() *Env {
 	dbMigrateFileSource := "../ink.schema/migrations"
 	GetEnvString(DB_MIGRATE_FILE_SOURCE, &dbMigrateFileSource)
 
+	dbLogMode := appENV == DEVELOPMENT
+	GetEnvBool(DB_LOG_MODE, &dbLogMode)
+
 	basePath := "api/v1"
 	GetEnvString(BASE_PATH, &basePath)
 
@@ -160,6 +165,7 @@ func LoadEnv() *Env {
 		dbConnMaxLifeTime,
 		dbConnMaxIdleTime,
 		dbMigrateFileSource,
+		dbLogMode,
 		basePath,
 	}
 }
@@ -167,6 +173,14 @@ func LoadEnv() *Env {
 func AssertEnvDev(feature string) {
 	if getAppENV() != DEVELOPMENT {
 		panic(fmt.Sprintf("[%s] assert development env failed", feature))
+	}
+}
+
+func GetEnvBool(key string, value *bool) {
+	if v := os.Getenv(key); len(v) > 0 {
+		if _, err := fmt.Sscanf(v, "%t", value); err != nil {
+			panic(err)
+		}
 	}
 }
 
