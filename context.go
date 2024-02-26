@@ -24,6 +24,14 @@ func (c *Context) Localizer() *libI18n.Localizer {
 	return c.MustGet(LOCALIZER_KEY).(*libI18n.Localizer)
 }
 
+func (c *Context) Response(res any) {
+	c.JSON(http.StatusOK, res)
+}
+
+func (c *Context) Empty() {
+	c.Status(http.StatusOK)
+}
+
 func (c *Context) AbortWithClientError(err error) {
 	translateErrorMsg(c, err)
 	c.AbortWithStatusJSON(
