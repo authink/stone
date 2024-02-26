@@ -14,13 +14,13 @@ func Sha256(input string) string {
 	return base64.URLEncoding.EncodeToString(hash.Sum(nil))
 }
 
-func HashPassword(password string) (hash string, err error) {
+func HashPassword(password string) (hash string) {
 	bytes, err := bcrypt.GenerateFromPassword(
 		[]byte(password),
 		bcrypt.DefaultCost,
 	)
 	if err != nil {
-		return
+		panic(err)
 	}
 
 	hash = string(bytes)
