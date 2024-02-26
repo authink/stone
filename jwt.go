@@ -39,7 +39,7 @@ func GenerateToken(key string, jwtClaims *JwtClaims) (string, error) {
 }
 
 func VerifyToken(key string, accessToken string) (jwtClaims *JwtClaims, err error) {
-	jwtClaims = &JwtClaims{}
+	jwtClaims = new(JwtClaims)
 
 	_, err = jwt.ParseWithClaims(
 		accessToken,
