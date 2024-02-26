@@ -16,6 +16,7 @@ func SetupRouter(app *AppContext) (router *gin.Engine, gApi *gin.RouterGroup) {
 	router.Use(
 		setupAppMiddleware(app),
 		setupI18nMiddleware(app.locales),
+		setupValidationMiddleware,
 	)
 
 	setupSwagger(router)

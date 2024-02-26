@@ -5,6 +5,8 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 	libI18n "github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/text/language"
 )
@@ -25,7 +27,6 @@ func i18nBundle(locales *embed.FS) (bundle *libI18n.Bundle) {
 }
 
 func setupI18nMiddleware(locales *embed.FS) gin.HandlerFunc {
-
 	return HandlerAdapter(func(c *Context) {
 		lang := c.Query("lang")
 		accept := c.GetHeader("Accept-Language")
@@ -34,4 +35,11 @@ func setupI18nMiddleware(locales *embed.FS) gin.HandlerFunc {
 		c.setLocalizer(localizer)
 		c.Next()
 	})
+}
+
+func setupValidationMiddleware(c *gin.Context) {
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		v.RegisterValidation(VALIDATION_EMAIL, emailValidation)
+	}
+	c.Next()
 }
