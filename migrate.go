@@ -8,8 +8,6 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
-type SeedFunc func(*AppContext)
-
 func createSourceUrl(app *AppContext) string {
 	return fmt.Sprintf("file://%s", app.DbMigrateFileSource)
 }

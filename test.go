@@ -2,7 +2,6 @@ package inkstone
 
 import (
 	"context"
-	"embed"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -21,16 +20,18 @@ type testContextKey string
 var testCtxAppKey = testContextKey("app")
 var testCtxRouterKey = testContextKey("router")
 
-func setup(app *AppContext, seed SeedFunc) {
+func setup(app *AppContext, opts *Options) {
 	migrateSchema(app, "up")
-	seed(app)
+	if opts.Seed != nil {
+		opts.Seed(app)
+	}
 }
 
 func teardown(app *AppContext) {
 	migrateSchema(app, "down")
 }
 
-func TestMain(packageName string, ctx *context.Context, locales *embed.FS, seed SeedFunc, setupAPIGroup SetupAPIGroupFunc) func(*testing.M) {
+func TestRun(packageName string, ctx *context.Context, opts *Options) func(*testing.M) {
 	env := LoadEnv()
 	env.DbName = fmt.Sprintf("%s_%s", env.DbName, packageName)
 	dropDB := CreateDB(
@@ -41,9 +42,9 @@ func TestMain(packageName string, ctx *context.Context, locales *embed.FS, seed 
 		env.DbPort,
 	)
 
-	app := NewAppContextWithEnv(locales, env)
-	router, apiGroup := SetupRouter(app)
-	setupAPIGroup(apiGroup)
+	app := NewAppContextWithEnv(opts.Locales, env)
+	setup(app, opts)
+	router := setupWithAppContext(app, opts)
 
 	*ctx = context.WithValue(
 		*ctx,
@@ -59,14 +60,9 @@ func TestMain(packageName string, ctx *context.Context, locales *embed.FS, seed 
 	return func(m *testing.M) {
 		defer dropDB()
 		defer app.Close()
+		defer teardown(app)
 
-		setup(app, seed)
-
-		exitCode := m.Run()
-
-		teardown(app)
-
-		if exitCode != 0 {
+		if exitCode := m.Run(); exitCode != 0 {
 			os.Exit(exitCode)
 		}
 	}

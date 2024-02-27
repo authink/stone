@@ -25,4 +25,4 @@ func SetupRouter(app *AppContext) (router *gin.Engine, gApi *gin.RouterGroup) {
 	return
 }
 
-type SetupAPIGroupFunc func(*gin.RouterGroup)
+type APIGroupAwareFunc func(*gin.RouterGroup)

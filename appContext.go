@@ -6,6 +6,8 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+type AppContextAwareFunc func(*AppContext)
+
 type AppContext struct {
 	locales *embed.FS
 	*Env

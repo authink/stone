@@ -4,6 +4,7 @@ import (
 	"embed"
 	"log"
 	"os"
+	"time"
 
 	"github.com/cosmtrek/air/runner"
 	"github.com/gin-gonic/gin"
@@ -13,8 +14,26 @@ import (
 	"github.com/swaggo/swag/gen"
 )
 
-func Main(locales *embed.FS, seed SeedFunc, setupAPIGroup SetupAPIGroupFunc) {
-	app := NewAppContext(locales)
+func setupWithAppContext(app *AppContext, opts *Options) *gin.Engine {
+	router, apiGroup := SetupRouter(app)
+	if opts.SetupAPIGroup != nil {
+		opts.SetupAPIGroup(apiGroup)
+	}
+	if opts.FinishSetup != nil {
+		opts.FinishSetup(app)
+	}
+	return router
+}
+
+type Options struct {
+	Locales       *embed.FS
+	Seed          AppContextAwareFunc
+	SetupAPIGroup APIGroupAwareFunc
+	FinishSetup   AppContextAwareFunc
+}
+
+func Run(opts *Options) {
+	app := NewAppContext(opts.Locales)
 	defer app.Close()
 
 	if app.AppENV != DEVELOPMENT {
@@ -39,7 +58,9 @@ func Main(locales *embed.FS, seed SeedFunc, setupAPIGroup SetupAPIGroupFunc) {
 		Use:   "seed",
 		Short: "Seed the database",
 		Run: func(cmd *cobra.Command, args []string) {
-			seed(app)
+			if opts.Seed != nil {
+				opts.Seed(app)
+			}
 		},
 	}
 
@@ -108,11 +129,13 @@ func Main(locales *embed.FS, seed SeedFunc, setupAPIGroup SetupAPIGroupFunc) {
 
 				r.Run()
 			} else {
-				router, apiGroup := SetupRouter(app)
-				setupAPIGroup(apiGroup)
 				gracefulShutdown(
-					app,
-					createServer(app, router),
+					createServer(
+						app.Host,
+						app.Port,
+						setupWithAppContext(app, opts),
+					),
+					time.Duration(app.ShutdownTimeout)*time.Second,
 				)
 			}
 		},

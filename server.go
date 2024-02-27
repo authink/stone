@@ -16,10 +16,10 @@ func startServer(srv *http.Server) {
 	}
 }
 
-func createServer(app *AppContext, handler http.Handler) (srv *http.Server) {
+func createServer(host string, port uint16, handler http.Handler) (srv *http.Server) {
 
 	srv = &http.Server{
-		Addr:    fmt.Sprintf("%s:%d", app.Host, app.Port),
+		Addr:    fmt.Sprintf("%s:%d", host, port),
 		Handler: handler,
 	}
 
@@ -28,13 +28,13 @@ func createServer(app *AppContext, handler http.Handler) (srv *http.Server) {
 	return
 }
 
-func gracefulShutdown(app *AppContext, srv *http.Server) {
+func gracefulShutdown(srv *http.Server, timeout time.Duration) {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 
 	<-quit
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(app.ShutdownTimeout)*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
 	if err := srv.Shutdown(ctx); err != nil {
