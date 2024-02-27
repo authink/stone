@@ -8,16 +8,16 @@ import (
 )
 
 const (
-	APP_KEY       string = "is_app"
-	LOCALIZER_KEY string = "is_localizer"
+	APP_CONTEXT_KEY string = "is_app_context"
+	LOCALIZER_KEY   string = "is_localizer"
 )
 
 type Context struct {
 	*gin.Context
 }
 
-func (c *Context) App() *AppContext {
-	return c.MustGet(APP_KEY).(*AppContext)
+func (c *Context) AppContext() *AppContext {
+	return c.MustGet(APP_CONTEXT_KEY).(*AppContext)
 }
 
 func (c *Context) Localizer() *libI18n.Localizer {
@@ -73,8 +73,8 @@ func translateErrorMsg(c *Context, err error) {
 	}
 }
 
-func (c *Context) setApp(app *AppContext) {
-	c.Set(APP_KEY, app)
+func (c *Context) setAppContext(appCtx *AppContext) {
+	c.Set(APP_CONTEXT_KEY, appCtx)
 }
 
 func (c *Context) setLocalizer(localizer *libI18n.Localizer) {

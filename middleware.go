@@ -13,7 +13,7 @@ import (
 
 func setupAppMiddleware(app *AppContext) gin.HandlerFunc {
 	return HandlerAdapter(func(c *Context) {
-		c.setApp(app)
+		c.setAppContext(app)
 		c.Next()
 	})
 }
