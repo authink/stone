@@ -27,6 +27,8 @@ type ORM[T any] interface {
 	InsertWithTx(*T, *sqlx.Tx) error
 	Save(*T) error
 	SaveWithTx(*T, *sqlx.Tx) error
+	Update(*T) error
+	UpdateWithTx(*T, *sqlx.Tx) error
 	Get(int) (*T, error)
 	Find() ([]T, error)
 	Delete(int) error
