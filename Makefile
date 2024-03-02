@@ -1,11 +1,11 @@
 .DEFAULT_GOAL := package
-V := 0.2.0
+V := 0.2.1
 
 tidy:
 	go mod tidy
 
 fmt:
-	go fmt
+	go fmt ./...
 fmt: tidy
 
 package:
