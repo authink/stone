@@ -1,9 +1,10 @@
-package inkstone
+package web
 
 import (
 	"embed"
 
 	"github.com/BurntSushi/toml"
+	"github.com/authink/inkstone/app"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
@@ -11,9 +12,9 @@ import (
 	"golang.org/x/text/language"
 )
 
-func setupAppMiddleware(app *AppContext) gin.HandlerFunc {
+func setupAppMiddleware(appCtx *app.AppContext) gin.HandlerFunc {
 	return HandlerAdapter(func(c *Context) {
-		c.setAppContext(app)
+		c.setAppContext(appCtx)
 		c.Next()
 	})
 }

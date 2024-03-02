@@ -1,29 +1,30 @@
-package inkstone
+package migrate
 
 import (
 	"fmt"
 
+	"github.com/authink/inkstone/db"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/mysql"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
-func createSourceUrl(app *AppContext) string {
-	return fmt.Sprintf("file://%s", app.DbMigrateFileSource)
+func createSourceUrl(dbMigrateFileSource string) string {
+	return fmt.Sprintf("file://%s", dbMigrateFileSource)
 }
 
-func migrateSchema(app *AppContext, direction string) {
+func Schema(direction, dbMigrateFileSource, dbUser, dbPasswd, dbName, dbHost string, dbPort uint16) {
 	if direction != "up" && direction != "down" {
 		panic(fmt.Errorf("migrate: unkwon direction %s", direction))
 	}
 
-	sourceUrl := createSourceUrl(app)
-	databaseUrl := ConnectDBUrl(
-		app.DbUser,
-		app.DbPasswd,
-		app.DbName,
-		app.DbHost,
-		app.DbPort,
+	sourceUrl := createSourceUrl(dbMigrateFileSource)
+	databaseUrl := db.MakeConnUrl(
+		dbUser,
+		dbPasswd,
+		dbName,
+		dbHost,
+		dbPort,
 		true,
 	)
 

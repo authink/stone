@@ -1,8 +1,9 @@
-package inkstone
+package web
 
 import (
 	"net/http"
 
+	"github.com/authink/inkstone/app"
 	"github.com/gin-gonic/gin"
 	libI18n "github.com/nicksnyder/go-i18n/v2/i18n"
 )
@@ -16,8 +17,8 @@ type Context struct {
 	*gin.Context
 }
 
-func (c *Context) AppContext() *AppContext {
-	return c.MustGet(APP_CONTEXT_KEY).(*AppContext)
+func (c *Context) AppContext() *app.AppContext {
+	return c.MustGet(APP_CONTEXT_KEY).(*app.AppContext)
 }
 
 func (c *Context) Localizer() *libI18n.Localizer {
@@ -73,7 +74,7 @@ func translateErrorMsg(c *Context, err error) {
 	}
 }
 
-func (c *Context) setAppContext(appCtx *AppContext) {
+func (c *Context) setAppContext(appCtx *app.AppContext) {
 	c.Set(APP_CONTEXT_KEY, appCtx)
 }
 

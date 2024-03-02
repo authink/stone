@@ -1,25 +1,24 @@
-package inkstone
+package app
 
 import (
 	"embed"
 
-	"github.com/jmoiron/sqlx"
+	"github.com/authink/inkstone/db"
+	"github.com/authink/inkstone/env"
 )
 
-type AppContextAwareFunc func(*AppContext)
-
 type AppContext struct {
-	locales *embed.FS
-	*Env
-	*sqlx.DB
+	Locales *embed.FS
+	*env.Env
+	*db.DB
 }
 
 func NewAppContext(locales *embed.FS) *AppContext {
-	return NewAppContextWithEnv(locales, LoadEnv())
+	return NewAppContextWithEnv(locales, env.LoadEnv())
 }
 
-func NewAppContextWithEnv(locales *embed.FS, env *Env) *AppContext {
-	db := ConnectDB(
+func NewAppContextWithEnv(locales *embed.FS, env *env.Env) *AppContext {
+	db := db.ConnectDB(
 		env.DbUser,
 		env.DbPasswd,
 		env.DbName,
@@ -35,6 +34,6 @@ func NewAppContextWithEnv(locales *embed.FS, env *Env) *AppContext {
 	return &AppContext{locales, env, db}
 }
 
-func (app *AppContext) Close() {
-	app.DB.Close()
+func (appCtx *AppContext) Close() {
+	appCtx.DB.Close()
 }

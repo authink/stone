@@ -1,4 +1,4 @@
-package inkstone
+package web
 
 type PagingRequest struct {
 	Offset int `form:"offset" binding:"min=0"`

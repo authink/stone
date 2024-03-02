@@ -1,4 +1,4 @@
-package inkstone
+package web
 
 import "fmt"
 

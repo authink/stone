@@ -1,4 +1,4 @@
-package inkstone
+package util
 
 import (
 	"time"

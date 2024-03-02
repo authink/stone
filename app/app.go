@@ -1,46 +1,24 @@
-package inkstone
+package app
 
 import (
-	"embed"
 	"log"
+	"net/http"
 	"os"
-	"time"
 
+	"github.com/authink/inkstone/env"
+	"github.com/authink/inkstone/migrate"
+	"github.com/authink/inkstone/server"
 	"github.com/cosmtrek/air/runner"
-	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 	"github.com/swaggo/swag"
 	"github.com/swaggo/swag/format"
 	"github.com/swaggo/swag/gen"
 )
 
-func setupWithAppContext(app *AppContext, opts *Options) *gin.Engine {
-	router, apiGroup := SetupRouter(app)
-	if opts.SetupAPIGroup != nil {
-		opts.SetupAPIGroup(apiGroup)
-	}
-	if opts.FinishSetup != nil {
-		opts.FinishSetup(app)
-	}
-	return router
-}
+type CreateHandlerFunc func() http.Handler
 
-type Options struct {
-	Locales       *embed.FS
-	Seed          AppContextAwareFunc
-	SetupAPIGroup APIGroupAwareFunc
-	FinishSetup   AppContextAwareFunc
-}
-
-func Run(opts *Options) {
-	app := NewAppContext(opts.Locales)
-	defer app.Close()
-
-	if app.AppENV != DEVELOPMENT {
-		gin.SetMode("release")
-	}
-
-	var cmd = &cobra.Command{Use: app.AppName}
+func Run(createHandler CreateHandlerFunc, appCtx *AppContext, opts *Options) {
+	var cmd = &cobra.Command{Use: appCtx.AppName}
 
 	var cmdMigrate = &cobra.Command{
 		Use:   "migrate",
@@ -50,7 +28,15 @@ func Run(opts *Options) {
 			if err != nil {
 				panic(err)
 			}
-			migrateSchema(app, direction)
+			migrate.Schema(
+				direction,
+				appCtx.DbMigrateFileSource,
+				appCtx.DbUser,
+				appCtx.DbPasswd,
+				appCtx.DbName,
+				appCtx.DbHost,
+				appCtx.DbPort,
+			)
 		},
 	}
 
@@ -59,7 +45,7 @@ func Run(opts *Options) {
 		Short: "Seed the database",
 		Run: func(cmd *cobra.Command, args []string) {
 			if opts.Seed != nil {
-				opts.Seed(app)
+				opts.Seed(appCtx)
 			}
 		},
 	}
@@ -112,7 +98,7 @@ func Run(opts *Options) {
 			}
 
 			if hotReload {
-				AssertEnvDev("live-reload")
+				env.AssertEnvDev("live-reload")
 
 				cfg, err := runner.InitConfig("")
 				if err != nil {
@@ -129,13 +115,11 @@ func Run(opts *Options) {
 
 				r.Run()
 			} else {
-				gracefulShutdown(
-					createServer(
-						app.Host,
-						app.Port,
-						setupWithAppContext(app, opts),
-					),
-					time.Duration(app.ShutdownTimeout)*time.Second,
+				server.Start(
+					appCtx.Host,
+					appCtx.Port,
+					appCtx.ShutdownTimeout,
+					createHandler(),
 				)
 			}
 		},
