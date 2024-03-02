@@ -1,4 +1,4 @@
-package orm
+package model
 
 import "time"
 
@@ -22,7 +22,7 @@ type Created struct {
 	CreatedAt *time.Time `db:"created_at"`
 }
 
-type Model struct {
+type Base struct {
 	Created
 	UpdatedAt *time.Time `db:"updated_at"`
 }

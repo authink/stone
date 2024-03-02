@@ -1,6 +1,7 @@
 package orm
 
 import (
+	"github.com/authink/inkstone/model"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -39,5 +40,5 @@ type Counter interface {
 }
 
 type Pager[T any] interface {
-	PaginationTx(*sqlx.Tx, Page) ([]T, error)
+	PaginationTx(*sqlx.Tx, model.Pager) ([]T, error)
 }
