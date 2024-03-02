@@ -98,7 +98,7 @@ func Run(createHandler CreateHandlerFunc, appCtx *AppContext, opts *Options) {
 			}
 
 			if hotReload {
-				env.AssertEnvDev("live-reload")
+				env.AssertDev("live-reload")
 
 				cfg, err := runner.InitConfig("")
 				if err != nil {

@@ -19,7 +19,7 @@ func Schema(direction, dbMigrateFileSource, dbUser, dbPasswd, dbName, dbHost str
 	}
 
 	sourceUrl := createSourceUrl(dbMigrateFileSource)
-	databaseUrl := db.MakeConnUrl(
+	databaseUrl := db.MakeUrl(
 		dbUser,
 		dbPasswd,
 		dbName,

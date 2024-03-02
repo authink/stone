@@ -55,7 +55,7 @@ func teardown(appCtx *app.AppContext) {
 }
 
 func Run(packageName string, ctx *context.Context, opts *app.Options) func(*testing.M) {
-	env := env.LoadEnv()
+	env := env.Load()
 	env.DbName = fmt.Sprintf("%s_%s", env.DbName, packageName)
 	dropDB := db.CreateTestDB(
 		env.DbUser,

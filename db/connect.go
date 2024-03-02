@@ -7,7 +7,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func MakeConnUrl(user, password, dbName, host string, port uint16, withSchema bool) string {
+func MakeUrl(user, password, dbName, host string, port uint16, withSchema bool) string {
 	databaseUrl := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=true", user, password, host, port, dbName)
 
 	if withSchema {
@@ -17,10 +17,10 @@ func MakeConnUrl(user, password, dbName, host string, port uint16, withSchema bo
 	return databaseUrl
 }
 
-func ConnectDB(user, password, dbName, host string, port, maxOpenConns, maxIdleConns, connMaxLifeTime, connMaxIdleTime uint16, logMode bool) *DB {
+func Connect(user, password, dbName, host string, port, maxOpenConns, maxIdleConns, connMaxLifeTime, connMaxIdleTime uint16, logMode bool) *DB {
 	mysqlDriverName := registerMysqlDriverIfNeeded(logMode)
 
-	databaseUrl := MakeConnUrl(user, password, dbName, host, port, false)
+	databaseUrl := MakeUrl(user, password, dbName, host, port, false)
 
 	db, err := sqlx.Open(mysqlDriverName, databaseUrl)
 	if err != nil {

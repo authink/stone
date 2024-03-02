@@ -91,7 +91,7 @@ type Env struct {
 	BasePath             string
 }
 
-func LoadEnv() *Env {
+func Load() *Env {
 	appENV := getAppENV()
 	appCWD := getAppCWD()
 	appName := "ink"
@@ -102,18 +102,18 @@ func LoadEnv() *Env {
 	port := uint16(8080)
 	shutdownTimeout := uint16(5)
 
-	GetEnvString(APP_NAME, &appName)
-	GetEnvString(SECRET_KEY, &secretKey)
+	GetString(APP_NAME, &appName)
+	GetString(SECRET_KEY, &secretKey)
 	if secretKey == "" {
 		panic(fmt.Sprintf("env %s can't be empty", SECRET_KEY))
 	}
 
-	GetEnvUint16(ACCESS_TOKEN_DURATION, &accessTokenDuration)
-	GetEnvUint16(REFRESH_TOKEN_DURATION, &refreshTokenDuration)
+	GetUint16(ACCESS_TOKEN_DURATION, &accessTokenDuration)
+	GetUint16(REFRESH_TOKEN_DURATION, &refreshTokenDuration)
 
-	GetEnvString(HOST, &host)
-	GetEnvUint16(PORT, &port)
-	GetEnvUint16(SHUTDOWN_TIMEOUT, &shutdownTimeout)
+	GetString(HOST, &host)
+	GetUint16(PORT, &port)
+	GetUint16(SHUTDOWN_TIMEOUT, &shutdownTimeout)
 
 	dbHost := "localhost"
 	dbPort := uint16(3306)
@@ -121,29 +121,29 @@ func LoadEnv() *Env {
 	dbPasswd := ""
 	dbName := "ink"
 
-	GetEnvString(DB_HOST, &dbHost)
-	GetEnvUint16(DB_PORT, &dbPort)
-	GetEnvString(DB_USER, &dbUser)
-	GetEnvString(DB_PASSWORD, &dbPasswd)
-	GetEnvString(DB_NAME, &dbName)
+	GetString(DB_HOST, &dbHost)
+	GetUint16(DB_PORT, &dbPort)
+	GetString(DB_USER, &dbUser)
+	GetString(DB_PASSWORD, &dbPasswd)
+	GetString(DB_NAME, &dbName)
 
 	dbMaxOpenConns := uint16(20)
 	dbMaxIdleConns := uint16(10)
 	dbConnMaxLifeTime := uint16(3600)
 	dbConnMaxIdleTime := uint16(300)
-	GetEnvUint16(DB_MAX_OPEN_CONNS, &dbMaxOpenConns)
-	GetEnvUint16(DB_MAX_IDLE_CONNS, &dbMaxIdleConns)
-	GetEnvUint16(DB_CONN_MAX_LIFE_TIME, &dbConnMaxLifeTime)
-	GetEnvUint16(DB_CONN_MAX_IDLE_TIME, &dbConnMaxIdleTime)
+	GetUint16(DB_MAX_OPEN_CONNS, &dbMaxOpenConns)
+	GetUint16(DB_MAX_IDLE_CONNS, &dbMaxIdleConns)
+	GetUint16(DB_CONN_MAX_LIFE_TIME, &dbConnMaxLifeTime)
+	GetUint16(DB_CONN_MAX_IDLE_TIME, &dbConnMaxIdleTime)
 
 	dbMigrateFileSource := "../ink.schema/migrations"
-	GetEnvString(DB_MIGRATE_FILE_SOURCE, &dbMigrateFileSource)
+	GetString(DB_MIGRATE_FILE_SOURCE, &dbMigrateFileSource)
 
 	dbLogMode := appENV == DEVELOPMENT
-	GetEnvBool(DB_LOG_MODE, &dbLogMode)
+	GetBool(DB_LOG_MODE, &dbLogMode)
 
 	basePath := "api/v1"
-	GetEnvString(BASE_PATH, &basePath)
+	GetString(BASE_PATH, &basePath)
 
 	return &Env{
 		appENV,
@@ -170,13 +170,13 @@ func LoadEnv() *Env {
 	}
 }
 
-func AssertEnvDev(feature string) {
+func AssertDev(feature string) {
 	if getAppENV() != DEVELOPMENT {
 		panic(fmt.Sprintf("[%s] assert development env failed", feature))
 	}
 }
 
-func GetEnvBool(key string, value *bool) {
+func GetBool(key string, value *bool) {
 	if v := os.Getenv(key); len(v) > 0 {
 		if _, err := fmt.Sscanf(v, "%t", value); err != nil {
 			panic(err)
@@ -184,7 +184,7 @@ func GetEnvBool(key string, value *bool) {
 	}
 }
 
-func GetEnvUint16(key string, value *uint16) {
+func GetUint16(key string, value *uint16) {
 	if v := os.Getenv(key); len(v) > 0 {
 		if _, err := fmt.Sscanf(v, "%d", value); err != nil {
 			panic(err)
@@ -192,7 +192,7 @@ func GetEnvUint16(key string, value *uint16) {
 	}
 }
 
-func GetEnvString(key string, value *string) {
+func GetString(key string, value *string) {
 	if v := os.Getenv(key); len(v) > 0 {
 		*value = v
 	}
@@ -200,7 +200,7 @@ func GetEnvString(key string, value *string) {
 
 func getAppENV() string {
 	appENV := DEVELOPMENT
-	GetEnvString(APP_ENV, &appENV)
+	GetString(APP_ENV, &appENV)
 
 	if !(appENV == DEVELOPMENT || appENV == TEST || appENV == PRODUCTION) {
 		panic(fmt.Sprintf("Invalid %s %s", APP_ENV, appENV))
@@ -209,6 +209,6 @@ func getAppENV() string {
 }
 
 func getAppCWD() (appCWD string) {
-	GetEnvString(APP_CWD, &appCWD)
+	GetString(APP_CWD, &appCWD)
 	return
 }

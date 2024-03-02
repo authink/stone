@@ -14,11 +14,11 @@ type AppContext struct {
 }
 
 func NewAppContext(locales *embed.FS) *AppContext {
-	return NewAppContextWithEnv(locales, env.LoadEnv())
+	return NewAppContextWithEnv(locales, env.Load())
 }
 
 func NewAppContextWithEnv(locales *embed.FS, env *env.Env) *AppContext {
-	db := db.ConnectDB(
+	db := db.Connect(
 		env.DbUser,
 		env.DbPasswd,
 		env.DbName,
