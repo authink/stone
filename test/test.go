@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"path"
 	"strings"
 	"testing"
@@ -25,7 +25,8 @@ type testContextKey string
 var testCtxAppKey = testContextKey("app_context")
 var testCtxRouterKey = testContextKey("router")
 
-func setup(appCtx *app.AppContext, opts *app.Options) {
+func setup(env *env.Env, opts *app.Options) (appCtx *app.AppContext) {
+	appCtx = app.NewAppContextWithEnv(opts.Locales, env)
 	migrate.Schema(
 		"up",
 		appCtx.DbMigrateFileSource,
@@ -38,6 +39,7 @@ func setup(appCtx *app.AppContext, opts *app.Options) {
 	if opts.Seed != nil {
 		opts.Seed(appCtx)
 	}
+	return
 }
 
 func teardown(appCtx *app.AppContext) {
@@ -49,6 +51,7 @@ func teardown(appCtx *app.AppContext) {
 		appCtx.DbHost,
 		appCtx.DbPort,
 	)
+	appCtx.Close()
 }
 
 func Run(packageName string, ctx *context.Context, opts *app.Options) func(*testing.M) {
@@ -62,8 +65,7 @@ func Run(packageName string, ctx *context.Context, opts *app.Options) func(*test
 		env.DbPort,
 	)
 
-	appCtx := app.NewAppContextWithEnv(opts.Locales, env)
-	setup(appCtx, opts)
+	appCtx := setup(env, opts)
 	router := web.SetupRouterWith(appCtx, opts)
 
 	*ctx = context.WithValue(
@@ -79,13 +81,11 @@ func Run(packageName string, ctx *context.Context, opts *app.Options) func(*test
 
 	return func(m *testing.M) {
 		defer dropDB()
-		defer appCtx.Close()
+		defer teardown(appCtx)
 
 		if exitCode := m.Run(); exitCode != 0 {
-			os.Exit(exitCode)
+			log.Printf("Tests finished(exitCode: %d)", exitCode)
 		}
-
-		teardown(appCtx)
 	}
 }
 

@@ -45,7 +45,7 @@ func CreateTestDB(user, password, dbName, host string, port uint16) func() {
 
 	_, err = db.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s", dbName))
 	if err != nil {
-		db.Close()
+		defer db.Close()
 		panic(err)
 	}
 
