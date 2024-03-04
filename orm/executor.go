@@ -3,7 +3,7 @@ package orm
 import (
 	"database/sql"
 
-	"github.com/authink/inkstone/model"
+	"github.com/authink/inkstone/orm/model"
 	"github.com/jmoiron/sqlx"
 )
 

@@ -28,8 +28,8 @@ func SetupRouter(appCtx *app.AppContext) (router *gin.Engine, gApi *gin.RouterGr
 
 func SetupRouterWith(appCtx *app.AppContext, opts *app.Options) *gin.Engine {
 	router, apiGroup := SetupRouter(appCtx)
-	if opts.SetupAPIGroup != nil {
-		opts.SetupAPIGroup(apiGroup)
+	if opts.SetupApiGroup != nil {
+		opts.SetupApiGroup(apiGroup)
 	}
 	if opts.FinishSetup != nil {
 		opts.FinishSetup(appCtx)

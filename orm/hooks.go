@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/authink/inkstone/model"
+	"github.com/authink/inkstone/orm/model"
 )
 
 func afterInsert(result sql.Result, m model.Identifier) (err error) {

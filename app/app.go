@@ -9,12 +9,15 @@ import (
 	"github.com/authink/inkstone/migrate"
 	"github.com/authink/inkstone/server"
 	"github.com/cosmtrek/air/runner"
+	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 	"github.com/swaggo/swag"
 	"github.com/swaggo/swag/format"
 	"github.com/swaggo/swag/gen"
 )
 
+type AppContextAwareFunc func(*AppContext)
+type ApiGroupAwareFunc func(*gin.RouterGroup)
 type CreateHandlerFunc func() http.Handler
 
 func Run(createHandler CreateHandlerFunc, appCtx *AppContext, opts *Options) {
@@ -54,18 +57,21 @@ func Run(createHandler CreateHandlerFunc, appCtx *AppContext, opts *Options) {
 		Use:   "swag",
 		Short: "Generate swagger docs",
 		Run: func(cmd *cobra.Command, args []string) {
+			var searchDir = "./src"
+			var routerFile = "web/router/setup.go"
+			var docsDir = "./src/docs"
 			err := format.New().Build(&format.Config{
-				SearchDir: "./src",
-				MainFile:  "router/setup.go",
+				SearchDir: searchDir,
+				MainFile:  routerFile,
 			})
 			if err != nil {
 				panic(err)
 			}
 
 			err = gen.New().Build(&gen.Config{
-				SearchDir:   "./src",
-				MainAPIFile: "router/setup.go",
-				OutputDir:   "./src/docs",
+				SearchDir:   searchDir,
+				MainAPIFile: routerFile,
+				OutputDir:   docsDir,
 
 				PropNamingStrategy: swag.CamelCase,
 				OutputTypes:        []string{"go", "json", "yaml"},
