@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	VALIDATION_EMAIL               string = "inkEmail"
-	VALIDATION_NOT_ALL_FIELDS_ZERO string = "notAllFieldsZero"
+	VALIDATION_EMAIL               = "inkEmail"
+	VALIDATION_NOT_ALL_FIELDS_ZERO = "notAllFieldsZero"
 )
 
 func ValidationEmail(fl validator.FieldLevel) bool {

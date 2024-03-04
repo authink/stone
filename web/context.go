@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	APP_CONTEXT_KEY string = "is_app_context"
-	LOCALIZER_KEY   string = "is_localizer"
+	APP_CONTEXT_KEY = "is_app_context"
+	LOCALIZER_KEY   = "is_localizer"
 )
 
 type Context struct {
