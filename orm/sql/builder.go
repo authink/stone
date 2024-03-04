@@ -6,8 +6,8 @@ import (
 	"strings"
 )
 
-func Col(tableAlias, col string) string {
-	return fmt.Sprintf("%s.%s", tableAlias, col)
+func Col(tbAlias, col string) string {
+	return fmt.Sprintf("%s.%s", tbAlias, col)
 }
 
 func Named(name string) sql.NamedArg {
@@ -24,4 +24,8 @@ func EQ(op1, op2 string) string {
 
 func LimitAndOffset(statement string) string {
 	return fmt.Sprintf("%s LIMIT :limit OFFSET :offset", statement)
+}
+
+func Count(tbAlias string) string {
+	return fmt.Sprintf("COUNT(%s.%s) c", tbAlias, Id)
 }
