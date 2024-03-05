@@ -7,6 +7,7 @@ import (
 
 	"github.com/authink/inkstone/env"
 	"github.com/authink/inkstone/migrate"
+	"github.com/authink/inkstone/orm/db"
 	"github.com/authink/inkstone/server"
 	"github.com/cosmtrek/air/runner"
 	"github.com/gin-gonic/gin"
@@ -93,6 +94,18 @@ func Run(createHandler CreateHandlerFunc, appCtx *AppContext, opts *Options) {
 		},
 	}
 
+	var cmdGen = &cobra.Command{
+		Use:   "gen",
+		Short: "Generate DB Models",
+		Run: func(cmd *cobra.Command, args []string) {
+			var (
+				mPath  = "./src/orm/models"
+				dbPath = "./src/orm/db"
+			)
+			db.GenByModels(mPath, dbPath)
+		},
+	}
+
 	var cmdRun = &cobra.Command{
 		Use:   "run",
 		Short: "Run server",
@@ -137,6 +150,7 @@ func Run(createHandler CreateHandlerFunc, appCtx *AppContext, opts *Options) {
 	cmd.AddCommand(cmdMigrate)
 	cmd.AddCommand(cmdSeed)
 	cmd.AddCommand(cmdSwag)
+	cmd.AddCommand(cmdGen)
 	cmd.AddCommand(cmdRun)
 
 	if err := cmd.Execute(); err != nil {

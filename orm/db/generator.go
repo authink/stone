@@ -1,62 +1,121 @@
 package db
 
-// import (
-// 	"go/ast"
-// 	"go/build"
-// 	"go/parser"
-// 	"go/token"
-// 	"os"
-// 	"path/filepath"
-// )
+import (
+	"bytes"
+	_ "embed"
+	"fmt"
+	"go/ast"
+	"go/format"
+	"go/parser"
+	"go/token"
+	"html/template"
+	"os"
+	"strings"
 
-// func GenByModels(packageName string) {
-// 	pkg, err := build.Import(packageName, "", build.FindOnly)
-// 	if err != nil {
-// 		panic(err)
-// 	}
+	"github.com/authink/inkstone/util"
+)
 
-// 	if err = filepath.Walk(pkg.Dir, func(path string, info os.FileInfo, err error) error {
-// 		if err != nil {
-// 			return err
-// 		}
+//go:embed template/*.tpl
+var tmpl string
 
-// 		if !info.IsDir() && filepath.Ext(path) == ".go" {
-// 			parseFile(path)
-// 		}
+type dbModel struct {
+	AtDB      bool
+	Tname     string
+	AtEmbed   bool
+	EmbedName string
 
-// 		return nil
-// 	}); err != nil {
-// 		panic(err)
-// 	}
-// }
+	Model  string
+	Name   string
+	Fields []string
+}
 
-// func parseFile(filename string) {
-// 	fset := token.NewFileSet()
-// 	node, err := parser.ParseFile(fset, filename, nil, parser.ParseComments)
-// 	if err != nil {
-// 		panic(err)
-// 	}
+func writeFile(dbm *dbModel, dbPath string) {
+	if _, err := os.Stat(dbPath); err != nil {
+		if os.IsNotExist(err) {
+			os.Mkdir(dbPath, os.ModePerm)
+		}
+	}
 
-// 	var comments []string
+	f, err := os.Create(fmt.Sprintf("%s/%s.go", dbPath, dbm.Name))
+	if err != nil {
+		panic(err)
+	}
 
-// 	for _, decl := range node.Decls {
-// 		genDecl, ok := decl.(*ast.GenDecl)
-// 		if !ok || genDecl.Tok != token.TYPE {
-// 			continue
-// 		}
+	t := template.Must(template.New("").Parse(tmpl))
 
-// 		for _, spec := range genDecl.Specs {
-// 			typeSpec, ok := spec.(*ast.TypeSpec)
-// 			if !ok {
-// 				continue
-// 			}
+	var buf bytes.Buffer
+	if err = t.Execute(&buf, dbm); err != nil {
+		panic(err)
+	}
 
-// 			if typeSpec.Name.Name == structName {
-// 				// 获取结构体定义之前的注释
-// 				for _, c := range genDecl.Doc.List {
-// 					comments = append(comments, c.Text)
-// 				}
-// 			}
-// 		}
-// 	}
-// }
+	p, err := format.Source(buf.Bytes())
+	if err != nil {
+		panic(err)
+	}
+
+	if _, err = f.Write(p); err != nil {
+		panic(err)
+	}
+}
+
+func outputDBModel(genDecl *ast.GenDecl, dbm *dbModel, dbPath string) {
+	for _, spec := range genDecl.Specs {
+		if t, ok := spec.(*ast.TypeSpec); ok {
+			dbm.Model = t.Name.String()
+			dbm.Name = util.ToLowerFirstLetter(dbm.Model)
+			if st, ok := t.Type.(*ast.StructType); ok {
+				for _, field := range st.Fields.List {
+					if len(field.Names) == 0 {
+						continue
+					}
+
+					dbm.Fields = append(dbm.Fields, field.Names[0].Name)
+				}
+			}
+		}
+	}
+	writeFile(dbm, dbPath)
+}
+
+func GenByModels(mPath, dbPath string) {
+	fset := token.NewFileSet()
+
+	pkgs, err := parser.ParseDir(fset, mPath, nil, parser.ParseComments)
+	if err != nil {
+		panic(err)
+	}
+
+	if pkg, ok := pkgs["models"]; ok {
+		for _, file := range pkg.Files {
+			for _, decl := range file.Decls {
+				if genDecl, ok := decl.(*ast.GenDecl); ok && genDecl.Tok == token.TYPE && genDecl.Doc != nil {
+					if annotations := genDecl.Doc.List; len(annotations) == 2 {
+						if !strings.Contains(annotations[0].Text, "@model") {
+							continue
+						}
+
+						if strings.Contains(annotations[1].Text, "@db") {
+							var dbm dbModel
+
+							dbm.AtDB = true
+							dbm.Tname = strings.TrimPrefix(annotations[1].Text, "// @db ")
+
+							outputDBModel(genDecl, &dbm, dbPath)
+							continue
+						}
+
+						if strings.Contains(annotations[1].Text, "@embed") {
+							var dbm dbModel
+
+							dbm.AtEmbed = true
+							dbm.EmbedName = util.ToLowerFirstLetter(strings.TrimPrefix(annotations[1].Text, "// @embed "))
+
+							outputDBModel(genDecl, &dbm, dbPath)
+							continue
+						}
+					}
+				}
+			}
+		}
+	}
+}
