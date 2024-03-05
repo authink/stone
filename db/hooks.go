@@ -35,7 +35,7 @@ func registerMysqlDriverIfNeeded(logMode bool) (mysqlDriverName string) {
 	mysqlDriverName = "mysql"
 	if logMode {
 		mysqlDriverName = "inkMysql"
-		sql.Register(mysqlDriverName, sqlhooks.Wrap(new(mysql.MySQLDriver), new(hooks)))
+		sql.Register(mysqlDriverName, sqlhooks.Wrap(&mysql.MySQLDriver{}, &hooks{}))
 	}
 	return
 }

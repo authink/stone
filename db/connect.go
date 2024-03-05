@@ -36,24 +36,40 @@ func Connect(user, password, dbName, host string, port, maxOpenConns, maxIdleCon
 }
 
 func CreateTestDB(user, password, dbName, host string, port uint16) func() {
-	databaseUrl := fmt.Sprintf("%s:%s@tcp(%s:%d)/", user, password, host, port)
+	var (
+		databaseUrl = fmt.Sprintf("%s:%s@tcp(%s:%d)/", user, password, host, port)
 
-	db, err := sqlx.Open("mysql", databaseUrl)
-	if err != nil {
-		panic(err)
-	}
+		connect = func() *sqlx.DB {
+			db, err := sqlx.Open("mysql", databaseUrl)
+			if err != nil {
+				panic(err)
+			}
+			return db
+		}
 
-	_, err = db.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s", dbName))
-	if err != nil {
-		defer db.Close()
-		panic(err)
-	}
+		create = func(db *sqlx.DB) {
+			_, err := db.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s", dbName))
+			if err != nil {
+				panic(err)
+			}
+		}
+
+		drop = func(db *sqlx.DB) {
+			_, err := db.Exec(fmt.Sprintf("DROP DATABASE IF EXISTS %s", dbName))
+			if err != nil {
+				panic(err)
+			}
+		}
+	)
+
+	db := connect()
+	defer db.Close()
+	drop(db)
+	create(db)
 
 	return func() {
+		db := connect()
 		defer db.Close()
-		_, err := db.Exec(fmt.Sprintf("DROP DATABASE IF EXISTS %s", dbName))
-		if err != nil {
-			panic(err)
-		}
+		drop(db)
 	}
 }
