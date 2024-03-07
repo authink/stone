@@ -1,11 +1,13 @@
 package model
 
 type Pager interface {
+	Arg
 	Num() int
 	Size() int
 }
 
 type Page struct {
+	Argument
 	Offset int
 	Limit  int
 }

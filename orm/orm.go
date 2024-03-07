@@ -21,22 +21,22 @@ type Updater[T any] interface {
 }
 
 type Geter[T any] interface {
-	Get(int) (*T, error)
-	GetTx(*sqlx.Tx, int) (*T, error)
+	Get(*T) error
+	GetTx(*sqlx.Tx, *T) error
 }
 
 type Deleter[T any] interface {
-	Delete(int) error
-	DeleteTx(*sqlx.Tx, int) error
+	Delete(*T) error
+	DeleteTx(*sqlx.Tx, *T) error
 }
 
 type Finder[T any] interface {
-	Find(...any) ([]T, error)
+	Find(...model.Arg) ([]T, error)
 }
 
 type Counter interface {
-	Count(...any) (int, error)
-	CountTx(*sqlx.Tx, ...any) (int, error)
+	Count(...model.Arg) (int, error)
+	CountTx(*sqlx.Tx, ...model.Arg) (int, error)
 }
 
 type Pager[T any] interface {

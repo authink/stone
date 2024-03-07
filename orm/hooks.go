@@ -35,6 +35,6 @@ func afterUpdate(sql.Result, model.Identifier) error {
 	return nil
 }
 
-func afterDelete(sql.Result) error {
+func afterDelete(sql.Result, model.Identifier) error {
 	return nil
 }
