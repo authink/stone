@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := package
-V := 0.2.3
+V := 0.2.4
 
 tidy:
 	go mod tidy
