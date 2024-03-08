@@ -4,6 +4,7 @@ go 1.21.4
 
 require (
 	github.com/BurntSushi/toml v1.3.2
+	github.com/authink/orm v0.0.1
 	github.com/cosmtrek/air v1.49.0
 	github.com/golang-jwt/jwt/v5 v5.2.0
 	github.com/golang-migrate/migrate/v4 v4.17.0
@@ -78,3 +79,5 @@ require (
 	github.com/go-playground/validator/v10 v10.14.0
 	github.com/go-sql-driver/mysql v1.7.1
 )
+
+replace github.com/authink/orm => ../orm
