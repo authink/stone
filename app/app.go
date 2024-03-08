@@ -7,8 +7,8 @@ import (
 
 	"github.com/authink/inkstone/env"
 	"github.com/authink/inkstone/migrate"
-	"github.com/authink/orm/db"
 	"github.com/authink/inkstone/server"
+	"github.com/authink/orm/db"
 	"github.com/cosmtrek/air/runner"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
