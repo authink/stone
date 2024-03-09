@@ -98,11 +98,21 @@ func Run(createHandler CreateHandlerFunc, appCtx *AppContext, opts *Options) {
 		Use:   "gen",
 		Short: "Generate DB Models",
 		Run: func(cmd *cobra.Command, args []string) {
+			models, err := cmd.Flags().GetString("model-package")
+			if err != nil {
+				panic(err)
+			}
+
 			var (
 				mPath  = "./src/orm/models"
 				dbPath = "./src/orm/db"
 			)
-			db.GenByModels(mPath, dbPath)
+
+			db.GenByModels(
+				mPath,
+				dbPath,
+				[]string{models},
+			)
 		},
 	}
 
@@ -145,6 +155,7 @@ func Run(createHandler CreateHandlerFunc, appCtx *AppContext, opts *Options) {
 	}
 
 	cmdMigrate.Flags().StringP("direction", "d", "up", "Specify migrate direction[up, down]")
+	cmdGen.Flags().StringP("model-package", "m", "github.com/authink/ink/src/orm/models", "Specify model's package")
 	cmdRun.Flags().BoolP("live-reload", "l", false, "Enable live reload")
 
 	cmd.AddCommand(cmdMigrate)
