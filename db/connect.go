@@ -2,13 +2,14 @@ package db
 
 import (
 	"fmt"
+	"net/url"
 	"time"
 
 	"github.com/jmoiron/sqlx"
 )
 
-func MakeUrl(user, password, dbName, host string, port uint16, withSchema bool) string {
-	databaseUrl := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=true", user, password, host, port, dbName)
+func MakeUrl(user, password, dbName, host string, port uint16, timeZone string, withSchema bool) string {
+	databaseUrl := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=true&loc=%s", user, password, host, port, dbName, url.QueryEscape(timeZone))
 
 	if withSchema {
 		return "mysql://" + databaseUrl
@@ -17,10 +18,10 @@ func MakeUrl(user, password, dbName, host string, port uint16, withSchema bool) 
 	return databaseUrl
 }
 
-func Connect(user, password, dbName, host string, port, maxOpenConns, maxIdleConns, connMaxLifeTime, connMaxIdleTime uint16, logMode bool) *DB {
+func Connect(user, password, dbName, host string, port, maxOpenConns, maxIdleConns, connMaxLifeTime, connMaxIdleTime uint16, timeZone string, logMode bool) *DB {
 	mysqlDriverName := registerMysqlDriverIfNeeded(logMode)
 
-	databaseUrl := MakeUrl(user, password, dbName, host, port, false)
+	databaseUrl := MakeUrl(user, password, dbName, host, port, timeZone, false)
 
 	db, err := sqlx.Open(mysqlDriverName, databaseUrl)
 	if err != nil {

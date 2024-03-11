@@ -13,7 +13,7 @@ func createSourceUrl(dbMigrateFileSource string) string {
 	return fmt.Sprintf("file://%s", dbMigrateFileSource)
 }
 
-func Schema(direction, dbMigrateFileSource, dbUser, dbPasswd, dbName, dbHost string, dbPort uint16) {
+func Schema(direction, dbMigrateFileSource, dbUser, dbPasswd, dbName, dbHost string, dbPort uint16, timeZone string) {
 	if direction != "up" && direction != "down" {
 		panic(fmt.Errorf("migrate: unkwon direction %s", direction))
 	}
@@ -25,6 +25,7 @@ func Schema(direction, dbMigrateFileSource, dbUser, dbPasswd, dbName, dbHost str
 		dbName,
 		dbHost,
 		dbPort,
+		timeZone,
 		true,
 	)
 

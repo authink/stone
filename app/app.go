@@ -40,6 +40,7 @@ func Run(createHandler CreateHandlerFunc, appCtx *AppContext, opts *Options) {
 				appCtx.DbName,
 				appCtx.DbHost,
 				appCtx.DbPort,
+				appCtx.DbTimeZone,
 			)
 		},
 	}

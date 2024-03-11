@@ -28,6 +28,7 @@ func NewAppContextWithEnv(locales *embed.FS, env *env.Env) *AppContext {
 		env.DbMaxIdleConns,
 		env.DbConnMaxLifeTime,
 		env.DbConnMaxIdleTime,
+		env.DbTimeZone,
 		env.DbLogMode,
 	)
 

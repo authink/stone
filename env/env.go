@@ -63,6 +63,7 @@ const (
 	DB_CONN_MAX_LIFE_TIME  = "DB_CONN_MAX_LIFE_TIME"
 	DB_CONN_MAX_IDLE_TIME  = "DB_CONN_MAX_IDLE_TIME"
 	DB_MIGRATE_FILE_SOURCE = "DB_MIGRATE_FILE_SOURCE"
+	DB_TIME_ZONE           = "DB_TIME_ZONE"
 	DB_LOG_MODE            = "DB_LOG_MODE"
 	BASE_PATH              = "BASE_PATH"
 )
@@ -87,6 +88,7 @@ type Env struct {
 	DbConnMaxLifeTime    uint16
 	DbConnMaxIdleTime    uint16
 	DbMigrateFileSource  string
+	DbTimeZone           string
 	DbLogMode            bool
 	BasePath             string
 }
@@ -138,6 +140,8 @@ func Load() *Env {
 
 	dbMigrateFileSource := "../ink.schema/migrations"
 	GetString(DB_MIGRATE_FILE_SOURCE, &dbMigrateFileSource)
+	dbTimeZone := "Asia/Shanghai"
+	GetString(DB_TIME_ZONE, &dbTimeZone)
 
 	dbLogMode := appENV == DEVELOPMENT
 	GetBool(DB_LOG_MODE, &dbLogMode)
@@ -165,6 +169,7 @@ func Load() *Env {
 		dbConnMaxLifeTime,
 		dbConnMaxIdleTime,
 		dbMigrateFileSource,
+		dbTimeZone,
 		dbLogMode,
 		basePath,
 	}

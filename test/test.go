@@ -35,6 +35,7 @@ func setup(env *env.Env, opts *app.Options) (appCtx *app.AppContext) {
 		appCtx.DbName,
 		appCtx.DbHost,
 		appCtx.DbPort,
+		appCtx.DbTimeZone,
 	)
 	if opts.Seed != nil {
 		opts.Seed(appCtx)
@@ -50,6 +51,7 @@ func teardown(appCtx *app.AppContext) {
 		appCtx.DbName,
 		appCtx.DbHost,
 		appCtx.DbPort,
+		appCtx.DbTimeZone,
 	)
 	appCtx.Close()
 }
