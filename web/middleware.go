@@ -29,9 +29,9 @@ func i18nBundle(locales *embed.FS) (bundle *libI18n.Bundle) {
 
 func setupI18nMiddleware(locales *embed.FS) gin.HandlerFunc {
 	return HandlerAdapter(func(c *Context) {
-		lang := c.Query("lang")
+		locale := c.Query("locale")
 		accept := c.GetHeader("Accept-Language")
-		localizer := libI18n.NewLocalizer(i18nBundle(locales), lang, accept)
+		localizer := libI18n.NewLocalizer(i18nBundle(locales), locale, accept)
 
 		c.setLocalizer(localizer)
 		c.Next()
