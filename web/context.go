@@ -3,7 +3,7 @@ package web
 import (
 	"net/http"
 
-	"github.com/authink/inkstone/app"
+	"github.com/authink/stone/app"
 	"github.com/gin-gonic/gin"
 	libI18n "github.com/nicksnyder/go-i18n/v2/i18n"
 )

@@ -1,11 +1,11 @@
-package inkstone
+package stone
 
 import (
 	"net/http"
 
-	"github.com/authink/inkstone/app"
-	"github.com/authink/inkstone/env"
-	"github.com/authink/inkstone/web"
+	"github.com/authink/stone/app"
+	"github.com/authink/stone/env"
+	"github.com/authink/stone/web"
 	"github.com/gin-gonic/gin"
 )
 

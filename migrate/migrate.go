@@ -3,7 +3,7 @@ package migrate
 import (
 	"fmt"
 
-	"github.com/authink/inkstone/db"
+	"github.com/authink/stone/db"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/mysql"
 	_ "github.com/golang-migrate/migrate/v4/source/file"

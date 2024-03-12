@@ -4,7 +4,7 @@ import (
 	"embed"
 
 	"github.com/BurntSushi/toml"
-	"github.com/authink/inkstone/app"
+	"github.com/authink/stone/app"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"

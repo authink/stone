@@ -1,4 +1,4 @@
-module github.com/authink/inkstone
+module github.com/authink/stone
 
 go 1.21.4
 

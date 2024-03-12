@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/authink/inkstone/env"
-	"github.com/authink/inkstone/migrate"
-	"github.com/authink/inkstone/server"
 	"github.com/authink/orm/db"
+	"github.com/authink/stone/env"
+	"github.com/authink/stone/migrate"
+	"github.com/authink/stone/server"
 	"github.com/cosmtrek/air/runner"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"

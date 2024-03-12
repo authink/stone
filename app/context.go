@@ -3,8 +3,8 @@ package app
 import (
 	"embed"
 
-	"github.com/authink/inkstone/db"
-	"github.com/authink/inkstone/env"
+	"github.com/authink/stone/db"
+	"github.com/authink/stone/env"
 )
 
 type AppContext struct {

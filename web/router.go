@@ -1,7 +1,7 @@
 package web
 
 import (
-	"github.com/authink/inkstone/app"
+	"github.com/authink/stone/app"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"

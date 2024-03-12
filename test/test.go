@@ -12,11 +12,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/authink/inkstone/app"
-	"github.com/authink/inkstone/db"
-	"github.com/authink/inkstone/env"
-	"github.com/authink/inkstone/migrate"
-	"github.com/authink/inkstone/web"
+	"github.com/authink/stone/app"
+	"github.com/authink/stone/db"
+	"github.com/authink/stone/env"
+	"github.com/authink/stone/migrate"
+	"github.com/authink/stone/web"
 	"github.com/gin-gonic/gin"
 )
 

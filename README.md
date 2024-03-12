@@ -1,4 +1,4 @@
-# inkstone
+# stone
 
 ## Publish
 
@@ -6,5 +6,5 @@
 # 1. upgrade version in Makefile
 # 2. public package
 $ make
-# 3. open https://pkg.go.dev/github.com/authink/inkstone
+# 3. open https://pkg.go.dev/github.com/authink/stone
 ```
