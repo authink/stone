@@ -35,6 +35,10 @@ func ValidationNotAllFieldsZero(sl validator.StructLevel) {
 	v := reflect.ValueOf(value)
 
 	for i := 0; i < t.NumField(); i++ {
+		if f := t.Field(i); f.Name == "Id" {
+			continue
+		}
+
 		fieldValue := v.Field(i)
 
 		if !fieldValue.IsZero() {
