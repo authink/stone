@@ -30,7 +30,7 @@ func (c *Context) Response(res any) {
 }
 
 func (c *Context) Empty() {
-	c.Status(http.StatusOK)
+	c.Status(http.StatusNoContent)
 }
 
 func (c *Context) AbortWithClientError(err error) {
