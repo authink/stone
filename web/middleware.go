@@ -41,6 +41,7 @@ func setupI18nMiddleware(locales *embed.FS) gin.HandlerFunc {
 func setupValidationMiddleware(c *gin.Context) {
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterValidation(VALIDATION_EMAIL, ValidationEmail)
+		v.RegisterValidation(VALIDATION_PHONE, ValidationPhone)
 	}
 	c.Next()
 }
