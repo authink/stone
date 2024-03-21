@@ -3,6 +3,8 @@ package web
 import (
 	"github.com/authink/stone/app"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -12,12 +14,16 @@ func setupSwagger(router *gin.Engine) {
 }
 
 func SetupRouter(appCtx *app.AppContext) (router *gin.Engine, gApi *gin.RouterGroup) {
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		v.RegisterValidation(VALIDATION_EMAIL, ValidationEmail)
+		v.RegisterValidation(VALIDATION_PHONE, ValidationPhone)
+	}
+
 	router = gin.Default()
 
 	router.Use(
 		setupAppMiddleware(appCtx),
 		setupI18nMiddleware(appCtx.Locales),
-		setupValidationMiddleware,
 	)
 
 	setupSwagger(router)

@@ -6,8 +6,6 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/authink/stone/app"
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
-	"github.com/go-playground/validator/v10"
 	libI18n "github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/text/language"
 )
@@ -36,12 +34,4 @@ func setupI18nMiddleware(locales *embed.FS) gin.HandlerFunc {
 		c.setLocalizer(localizer)
 		c.Next()
 	})
-}
-
-func setupValidationMiddleware(c *gin.Context) {
-	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-		v.RegisterValidation(VALIDATION_EMAIL, ValidationEmail)
-		v.RegisterValidation(VALIDATION_PHONE, ValidationPhone)
-	}
-	c.Next()
 }
